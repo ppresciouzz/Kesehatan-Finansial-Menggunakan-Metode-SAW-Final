@@ -211,7 +211,7 @@ class Aplikasi:
                 continue
             PerankinganSAW.hitung(daftar)
             print(f"\n--- {'RANKING GLOBAL (SAW)' if kelompok is None else f'RANKING KELOMPOK {kelompok} (SAW)'} ---")
-            print("Rank Username       Kelompok   Level  Tab%     Utang%   R-Tab   R-Utang  Skor")
+            print("Username       Kelompok   Level  Tab%     Utang%   R-Tab   R-Utang  Skor    Rank")
             print(GARIS)
             posisi = 0
             for no, d in enumerate(daftar, 1):
@@ -219,8 +219,8 @@ class Aplikasi:
                 tanda = "  <-- Anda" if d.username == self.user else ""
                 if tanda:
                     posisi = no
-                print(f"{no:<5}{d.username[:13]:<15}{d.kelompok:<11}{d.level:<7}{tab:<9}{utg:<9}"
-                      f"{round(d.r_tabungan, 4):<8}{round(d.r_utang, 4):<9}{round(d.skor, 4)}{tanda}")
+                print(f"{d.username[:13]:<15}{d.kelompok:<11}{d.level:<7}{tab:<9}{utg:<9}"
+                      f"{round(d.r_tabungan, 4):<8}{round(d.r_utang, 4):<9}{round(d.skor, 4):<8}{no}{tanda}")
             print(GARIS)
             print(f"Peringkat Anda: {posisi} dari {len(daftar)} pengguna." if posisi
                   else "Anda belum termasuk dalam ranking ini.")
