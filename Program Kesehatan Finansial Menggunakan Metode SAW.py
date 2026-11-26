@@ -1,6 +1,28 @@
 import csv
 import os
 
+print ("=" * 150)
+print ("\n" + "Mini Project".center(150))
+print ("Programa Komputer".center(150))
+print ("\n\n" + "Program Klasifikasi Tingkat Kesejahteraan Finansial Individu (Level A-D)" .center(150) + "\n" + "Berdasarkan Rasio Tabungan dan Rasio Pembayaran Hutang".center(150))
+print ("Oleh:".center(150))
+print ("Kelompok 8A\n".center(150))
+print ("Anggota:".center(150))
+print ("1. Sagiv Albova Masri (2610931017)".center(150))
+print ("2. Kaila Nazwa Putri Rizani (2610933042)".center(150))
+print ("3. Felania Mutri Sari (2610932008)".center(150))
+print ("\n\n" + "Asisten Pembimbing:".center(150))
+print ("Anisha Nur Aprilia".center(150))
+print ("\n\n" + "Dosen Pengampu:".center(150))
+print ("Wisnel, S.T., M.Sc.".center(150))
+print ("\n\n" + "Laboratorium Sistem Informasi Dan Keputusan".center(150))
+print ("Departemen Teknik Industri".center(150))
+print ("Fakultas Teknik".center(150))
+print ("Universitas Andalas".center(150))
+print ("2026".center(150))
+
+print ("\n\n" + "=" * 150)
+
 AMBANG_TABUNGAN, AMBANG_UTANG = 10, 20
 BOBOT_TABUNGAN, BOBOT_UTANG = 0.5, 0.5
 FILE_AKUN, FILE_DATA, FILE_CONTOH = "akun.csv", "data_penilaian.csv", "data_contoh_reddit.csv"
