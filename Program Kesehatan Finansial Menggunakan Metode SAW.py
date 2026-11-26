@@ -1,4 +1,5 @@
 import csv
+import math
 import os
 
 print ("=" * 150)
@@ -20,7 +21,6 @@ print ("Departemen Teknik Industri".center(150))
 print ("Fakultas Teknik".center(150))
 print ("Universitas Andalas".center(150))
 print ("2026".center(150))
-
 print ("\n\n" + "=" * 150)
 
 AMBANG_TABUNGAN, AMBANG_UTANG = 10, 20
@@ -44,7 +44,6 @@ TIPS_KELOMPOK = {
 }
 GARIS = "-" * 80
 
-
 class DataKeuangan:
 
     def __init__(self, username, kelompok, pendapatan, tabungan, utang):
@@ -59,7 +58,6 @@ class DataKeuangan:
     @classmethod
     def dari_baris(cls, b):
         return cls(b["username"], b["kelompok"], int(b["pendapatan"]), int(b["tabungan"]), int(b["utang"]))
-
 
 class Penyimpanan:
 
@@ -81,8 +79,12 @@ class Penyimpanan:
 
     @staticmethod
     def _tulis(nama, kolom, baris):
+        baru = not os.path.exists(nama) or os.path.getsize(nama) == 0
         with open(nama, "a", newline="") as f:
-            csv.DictWriter(f, fieldnames=kolom).writerow(baris)
+            w = csv.DictWriter(f, fieldnames=kolom)
+            if baru:
+                w.writeheader()
+            w.writerow(baris)
 
     def username_dipakai(self, username):
         return any(a["username"].lower() == username.lower() for a in self._baca(FILE_AKUN))
@@ -112,6 +114,24 @@ class PerankinganSAW:
             d.r_utang = 1 if d.rasio_utang == 0 else min_utang / d.rasio_utang
             d.skor = BOBOT_TABUNGAN * d.r_tabungan + BOBOT_UTANG * d.r_utang
         daftar.sort(key=lambda d: (-d.skor, d.level))
+
+    @staticmethod
+    def saran(daftar, i):
+        d = daftar[i]
+        if i == 0:
+            return (f"Pertahankan peringkat 1: jaga rasio tabungan minimal {round(d.rasio_tabungan * 100, 2)}% "
+                    f"dan rasio utang maksimal {round(d.rasio_utang * 100, 2)}%.")
+        atas = daftar[i - 1]
+        tambah = math.ceil(max(0, atas.rasio_tabungan - d.rasio_tabungan) * d.pendapatan)
+        kurang = math.ceil(max(0, d.rasio_utang - atas.rasio_utang) * d.pendapatan)
+        tujuan = f"menyusul peringkat {i}"
+        if tambah and kurang:
+            return f"Untuk {tujuan}: tambah tabungan sekitar Rp {tambah} dan kurangi utang sekitar Rp {kurang} per tahun."
+        if tambah:
+            return f"Untuk {tujuan}: tambah tabungan sekitar Rp {tambah} per tahun."
+        if kurang:
+            return f"Untuk {tujuan}: kurangi utang sekitar Rp {kurang} per tahun."
+        return f"Skor sama dengan peringkat {i}: tambah sedikit tabungan atau kurangi sedikit utang agar naik."
 
 
 class Aplikasi:
@@ -191,7 +211,7 @@ class Aplikasi:
                 continue
             PerankinganSAW.hitung(daftar)
             print(f"\n--- {'RANKING GLOBAL (SAW)' if kelompok is None else f'RANKING KELOMPOK {kelompok} (SAW)'} ---")
-            print("No   Username       Kelompok   Level  Tab%     Utang%   R-Tab   R-Utang  Skor")
+            print("Rank Username       Kelompok   Level  Tab%     Utang%   R-Tab   R-Utang  Skor")
             print(GARIS)
             posisi = 0
             for no, d in enumerate(daftar, 1):
@@ -204,6 +224,10 @@ class Aplikasi:
             print(GARIS)
             print(f"Peringkat Anda: {posisi} dari {len(daftar)} pengguna." if posisi
                   else "Anda belum termasuk dalam ranking ini.")
+            if posisi:
+                print(f"\nREKOMENDASI UNTUK ANDA (peringkat {posisi}):")
+                print(f"  {PerankinganSAW.saran(daftar, posisi - 1)}")
+            print()
             print(f"Metode SAW: Skor = {BOBOT_TABUNGAN} x R-Tab + {BOBOT_UTANG} x R-Utang\n"
                   "R-Tab = tabungan / tabungan tertinggi (benefit).\n"
                   "R-Utang = utang terendah (selain 0) / utang (cost); utang 0 bernilai 1.")
@@ -287,6 +311,5 @@ class Aplikasi:
                 return print("Terima kasih.")
             else:
                 print("Pilihan tidak dikenal.")
-
 
 Aplikasi().jalankan()
